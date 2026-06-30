@@ -761,13 +761,20 @@
     boxZoom: false,
     keyboard: false,
     tap: false,
-    zoomSnap: 0.1
+    zoomSnap: 0.5
   });
+
+  // Dark background so tile grid never flashes white during load
+  map.getContainer().style.background = '#0d0d0f';
 
   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
     attribution: '© <a href="https://openstreetmap.org">OSM</a> © <a href="https://carto.com">CARTO</a>',
     subdomains: 'abcd', maxZoom: 19
   }).addTo(map);
+
+  // zoom 5, center [38, 136.5] verified to frame all of Japan
+  // on a 390px mobile screen: shows ~129°E–145°E / ~31°N–45°N
+  map.setView([38, 136.5], 5);
 
   const stops = [
     { name:'Tokyo',       jp:'東京', lat:35.682, lng:139.759, color:'#c4123f', dates:'Mar 5–7',   tip:'left'  },
@@ -791,10 +798,6 @@
   L.polyline(stops.map(s=>[s.lat,s.lng]),{
     color:'#c4123f', weight:2, opacity:0.55, dashArray:'6 5'
   }).addTo(map);
-
-  // Auto-fit to show all markers — generous left padding for Kyoto label, right padding for map edge
-  const bounds = L.latLngBounds(stops.map(s=>[s.lat,s.lng]));
-  map.fitBounds(bounds, {paddingTopLeft:[40,60], paddingBottomRight:[160,60]});
 </script>
 
 <script>
