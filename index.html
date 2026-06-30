@@ -293,12 +293,28 @@
     max-width:70ch; margin-bottom:24px;
   }
   .exp-narrative b{ font-weight:500; color:var(--washi); }
-  .exp-photos{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:24px; }
-  @media (max-width:560px){ .exp-photos{ grid-template-columns:repeat(2,1fr); } }
-  .exp-photos img{
-    width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:14px;
-    box-shadow:inset 0 0 0 1px #ffffff11;
+  .exp-photos{ display:grid; gap:12px; margin-bottom:24px; }
+  .exp-photos.one-col{ grid-template-columns:1fr; }
+  .exp-photos.two-col{ grid-template-columns:1fr 1fr; }
+  .exp-photos.three-col{ grid-template-columns:1fr 1fr 1fr; }
+  @media (max-width:560px){
+    .exp-photos.three-col{ grid-template-columns:1fr 1fr; }
+    .exp-photos.two-col{ grid-template-columns:1fr 1fr; }
   }
+  .exp-photo-card{ position:relative; border-radius:18px; overflow:hidden; }
+  .exp-photo-card img{
+    width:100%; aspect-ratio:3/2; object-fit:cover; display:block;
+    transition:transform 0.4s ease;
+  }
+  .exp-photo-card:hover img{ transform:scale(1.03); }
+  .exp-photo-label{
+    position:absolute; bottom:0; left:0; right:0;
+    padding:28px 14px 12px;
+    background:linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 100%);
+    font-size:12px; font-weight:500; color:var(--washi);
+    letter-spacing:0.04em;
+  }
+  .exp-photo-label.red{ color:#ff8099; }
   .exp-tags{ display:flex; flex-wrap:wrap; gap:8px; }
   .exp-tag{
     font-size:12px; letter-spacing:0.05em; color:#ffffffbb;
@@ -434,9 +450,18 @@
     <h2 class="jp-display">One night in Tokyo. Everything else is the real Japan.</h2>
     <p class="deck">Not a city trip. A route through three completely different versions of Japan — each one built around what you're actually there to feel, not what to check off.</p>
 
-    <!-- ROUTE MAP — real Leaflet map -->
-    <div class="route-map" style="padding:0; overflow:hidden;">
-      <div id="japan-map" style="height:340px; border-radius:26px;"></div>
+    <!-- ROUTE MAP — real Leaflet map with animation -->
+    <div class="route-map" style="padding:0; overflow:hidden; position:relative;">
+      <div id="japan-map" style="height:420px; border-radius:26px;"></div>
+      <button id="play-btn" onclick="runTripAnimation()" style="
+        position:absolute; bottom:20px; right:20px; z-index:999;
+        background:rgba(10,10,11,0.85); border:1px solid rgba(255,255,255,0.18);
+        -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+        color:var(--washi); font-family:'Work Sans',sans-serif;
+        font-size:12px; letter-spacing:0.1em; text-transform:uppercase;
+        padding:10px 20px; border-radius:100px; cursor:pointer;
+        display:flex; align-items:center; gap:8px;
+      ">▶ Play the journey</button>
     </div>
 
     <!-- EXPERIENCE CARD -->
@@ -452,8 +477,11 @@
         <p class="exp-narrative">
           You land, you drop your bags, and you go see <b>one thing.</b> Tokyo's oldest temple sits in a neighborhood that still moves like it's from another century — a giant red lantern gate, a covered market street leading toward it, incense in the air. That's the impression Tokyo leaves on this trip: a brief, sharp one. Then you're on a train into the mountains.
         </p>
-        <div class="exp-photos">
-          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Sensoji%202023.jpg" alt="Senso-ji Temple">
+        <div class="exp-photos one-col">
+          <div class="exp-photo-card">
+            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Sensoji%202023.jpg" alt="Senso-ji Temple">
+            <div class="exp-photo-label">Senso-ji Temple · Asakusa</div>
+          </div>
         </div>
         <div class="exp-tags">
           <span class="exp-tag">Senso-ji Temple at dusk</span>
@@ -472,9 +500,15 @@
         <p class="exp-narrative">
           The city disappears completely. Hakone is mountains, hot springs, and a volcanic lake with <b>Fuji sitting behind it</b> like a postcard you're standing inside. You sleep in a traditional ryokan on tatami floors — dinner is a multi-course kaiseki spread where every dish is its own event. The onsen (a natural outdoor hot spring flowing straight from volcanic ground) is what it sounds like: you sit in water that comes out of the earth hot, in the middle of the mountains, at night. Nothing about it is complicated.
         </p>
-        <div class="exp-photos">
-          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/LakeAshi%20and%20MtFuji%20Hakone.JPG" alt="Lake Ashi and Mt Fuji">
-          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Hakone%20Yumoto%20Onsen%20Tenseien.JPG" alt="Hakone ryokan onsen">
+        <div class="exp-photos two-col">
+          <div class="exp-photo-card">
+            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/LakeAshi%20and%20MtFuji%20Hakone.JPG" alt="Lake Ashi and Mt Fuji">
+            <div class="exp-photo-label red">Lake Ashi · Mt. Fuji</div>
+          </div>
+          <div class="exp-photo-card">
+            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Hakone%20Yumoto%20Onsen%20Tenseien.JPG" alt="Hakone ryokan onsen">
+            <div class="exp-photo-label red">Onsen · Ryokan night</div>
+          </div>
         </div>
         <div class="exp-tags">
           <span class="exp-tag red">Lake Ashi cruise</span>
@@ -498,17 +532,23 @@
         <p class="exp-narrative" style="margin-top:-8px;">
           One morning is Arashiyama — the bamboo grove that actually looks like another planet, plus a monkey park on the hill above it with views over the city. Evenings in Gion, Kyoto's old district, are the Europe comparison that actually lands: beautiful architecture, quiet streets, lantern light, extraordinary food. And <b>March 14</b> is the birthday.
         </p>
-        <div class="exp-photos">
-          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Fushimi%20Inari-taisha%20sembon-torii.jpg" alt="Fushimi Inari torii gates">
-          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Arashiyama%20Bamboo%20Grove%20(Unsplash).jpg" alt="Arashiyama Bamboo Grove">
-          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Gion%20Alley%20at%20Night.jpg" alt="Gion at night">
+        <div class="exp-photos three-col">
+          <div class="exp-photo-card">
+            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Fushimi%20Inari-taisha%20sembon-torii.jpg" alt="Fushimi Inari torii gates">
+            <div class="exp-photo-label red">Fushimi Inari at sunrise</div>
+          </div>
+          <div class="exp-photo-card">
+            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Arashiyama%20Bamboo%20Grove%20(Unsplash).jpg" alt="Arashiyama Bamboo Grove">
+            <div class="exp-photo-label red">Arashiyama bamboo</div>
+          </div>
+          <div class="exp-photo-card">
+            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Gion%20Alley%20at%20Night.jpg" alt="Gion at night">
+            <div class="exp-photo-label">Gion evenings</div>
+          </div>
         </div>
         <div class="exp-tags">
-          <span class="exp-tag red">Fushimi Inari at sunrise</span>
           <span class="exp-tag">Tea ceremony</span>
           <span class="exp-tag">Sake tasting · Fushimi</span>
-          <span class="exp-tag red">Arashiyama bamboo</span>
-          <span class="exp-tag">Gion evenings</span>
           <span class="exp-tag red">🎂 Birthday dinner · Mar 14</span>
         </div>
       </div>
@@ -564,8 +604,8 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
   const map = L.map('japan-map', {
-    center: [35.5, 137.8],
-    zoom: 7,
+    center: [37.5, 136.5],
+    zoom: 5,
     zoomControl: false,
     attributionControl: true,
     scrollWheelZoom: false,
@@ -584,22 +624,140 @@
     { name:'Kyoto',  jp:'京都', lat:35.011, lng:135.768, color:'#c4123f', dates:'Mar 9–15' }
   ];
 
-  stops.forEach(s => {
-    const icon = L.divIcon({
+  function makeIcon(color, size=14){
+    return L.divIcon({
       className:'',
-      html:`<div style="width:14px;height:14px;background:${s.color};border-radius:50%;border:2px solid rgba(255,255,255,0.3);box-shadow:0 0 14px ${s.color}88;"></div>`,
-      iconSize:[14,14], iconAnchor:[7,7]
+      html:`<div style="width:${size}px;height:${size}px;background:${color};border-radius:50%;border:2px solid rgba(255,255,255,0.35);box-shadow:0 0 ${size}px ${color}99;"></div>`,
+      iconSize:[size,size], iconAnchor:[size/2,size/2]
     });
-    L.marker([s.lat,s.lng],{icon}).addTo(map)
-      .bindTooltip(
-        `<span style="font-family:'Noto Serif JP',serif;font-size:13px;">${s.jp}</span>&nbsp;<span style="opacity:0.6;font-size:10px;letter-spacing:0.06em;">${s.name.toUpperCase()} · ${s.dates}</span>`,
-        {permanent:true, className:'map-label', direction:'right', offset:[12,0]}
-      );
+  }
+
+  const markers = stops.map(s => {
+    const m = L.marker([s.lat,s.lng],{icon:makeIcon(s.color)}).addTo(map);
+    m.bindTooltip(
+      `<span style="font-family:'Noto Serif JP',serif;font-size:13px;">${s.jp}</span>&nbsp;<span style="opacity:0.6;font-size:10px;letter-spacing:0.06em;">${s.name.toUpperCase()} · ${s.dates}</span>`,
+      {permanent:true, className:'map-label', direction:'right', offset:[10,0]}
+    );
+    return m;
   });
 
-  L.polyline(stops.map(s=>[s.lat,s.lng]),{
-    color:'#c4123f', weight:2, opacity:0.55, dashArray:'7 5'
+  const routeLine = L.polyline(stops.map(s=>[s.lat,s.lng]),{
+    color:'#c4123f', weight:2, opacity:0.5, dashArray:'7 5'
   }).addTo(map);
+
+  // ===== ANIMATION =====
+  let animRunning = false;
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+  function animateLatLng(marker, fromLat, fromLng, toLat, toLng, durationMs) {
+    return new Promise(resolve => {
+      const steps = 60;
+      const interval = durationMs / steps;
+      let i = 0;
+      const timer = setInterval(() => {
+        i++;
+        const t = i / steps;
+        const ease = t < 0.5 ? 2*t*t : -1+(4-2*t)*t;
+        marker.setLatLng([
+          fromLat + (toLat - fromLat) * ease,
+          fromLng + (toLng - fromLng) * ease
+        ]);
+        if (i >= steps) { clearInterval(timer); resolve(); }
+      }, interval);
+    });
+  }
+
+  async function runTripAnimation() {
+    if (animRunning) return;
+    animRunning = true;
+    const btn = document.getElementById('play-btn');
+    btn.style.opacity = '0.4';
+    btn.style.pointerEvents = 'none';
+
+    // Phase 1: Zoom out to show Pacific approach
+    map.flyTo([38, 155], 3, {duration: 1.8, easeLinearity: 0.4});
+    await sleep(2200);
+
+    // Phase 2: Plane arrives from east (over Pacific)
+    const planeIcon = icon => L.divIcon({
+      className:'',
+      html:`<div style="font-size:22px;line-height:1;filter:drop-shadow(0 0 6px #c4123f99);">${icon}</div>`,
+      iconSize:[28,28], iconAnchor:[14,14]
+    });
+
+    const plane = L.marker([36, 170], {icon: planeIcon('✈️'), zIndexOffset:1000}).addTo(map);
+    await sleep(300);
+
+    // Fly from Pacific to Tokyo — great circle arcs north
+    const waypoints = [
+      [38, 165], [40, 158], [41, 150], [40, 145], [38, 141], [35.682, 139.759]
+    ];
+    for (let i = 0; i < waypoints.length - 1; i++) {
+      await animateLatLng(plane,
+        waypoints[i][0], waypoints[i][1],
+        waypoints[i+1][0], waypoints[i+1][1],
+        400
+      );
+    }
+
+    // Tokyo lands — pulse marker
+    markers[0].setIcon(makeIcon('#ff3d6e', 20));
+    await sleep(200);
+    markers[0].setIcon(makeIcon('#c4123f', 14));
+    await sleep(600);
+
+    // Phase 3: Zoom into Japan for train leg
+    plane.remove();
+    map.flyTo([36.5, 137.5], 7, {duration: 1.5, easeLinearity: 0.3});
+    await sleep(2000);
+
+    // Phase 4: Train Tokyo → Hakone → Kyoto
+    const train = L.marker([35.682, 139.759], {icon: planeIcon('🚄'), zIndexOffset:1000}).addTo(map);
+
+    await animateLatLng(train, 35.682, 139.759, 35.232, 139.025, 2000);
+    markers[1].setIcon(makeIcon('#f0c050', 20));
+    await sleep(200);
+    markers[1].setIcon(makeIcon('#c9a227', 14));
+    await sleep(400);
+
+    await animateLatLng(train, 35.232, 139.025, 35.011, 135.768, 2400);
+    markers[2].setIcon(makeIcon('#ff3d6e', 20));
+    await sleep(200);
+    markers[2].setIcon(makeIcon('#c4123f', 14));
+    await sleep(800);
+
+    // Phase 5: Train becomes plane, departs west
+    train.remove();
+    const planeOut = L.marker([35.011, 135.768], {icon: planeIcon('✈️'), zIndexOffset:1000}).addTo(map);
+
+    map.flyTo([35, 130], 5, {duration: 1.2});
+    await sleep(1400);
+
+    const outWaypoints = [
+      [35, 132], [34, 128], [33, 122], [32, 115]
+    ];
+    for (let i = 0; i < outWaypoints.length - 1; i++) {
+      await animateLatLng(planeOut,
+        outWaypoints[i][0], outWaypoints[i][1],
+        outWaypoints[i+1][0], outWaypoints[i+1][1],
+        400
+      );
+    }
+    planeOut.remove();
+
+    // Phase 6: Settle back to full Japan view
+    map.flyTo([37.5, 136.5], 5, {duration: 1.6});
+    await sleep(1800);
+
+    btn.textContent = '↺ Replay';
+    btn.style.opacity = '1';
+    btn.style.pointerEvents = 'auto';
+    btn.onclick = () => {
+      markers.forEach((m,i) => m.setIcon(makeIcon(stops[i].color)));
+      runTripAnimation();
+    };
+    animRunning = false;
+  }
 </script>
 
 </body>
