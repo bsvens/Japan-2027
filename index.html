@@ -380,6 +380,34 @@
   }
   .back-btn:hover{ color:var(--washi); }
 
+  /* ===== HIGHLIGHTS ===== */
+  .highlights{ }
+  .hl-label{
+    font-size:11px; letter-spacing:0.2em; text-transform:uppercase;
+    color:var(--gold); margin-bottom:32px; position:relative; z-index:1;
+  }
+  .hl-grid{
+    display:grid; grid-template-columns:1fr 1fr;
+    gap:16px; position:relative; z-index:1;
+  }
+  @media (max-width:640px){ .hl-grid{ grid-template-columns:1fr; } }
+  .hl-card{
+    background:var(--glass-bg); border:1px solid var(--glass-border);
+    -webkit-backdrop-filter:blur(18px) saturate(150%);
+    backdrop-filter:blur(18px) saturate(150%);
+    border-radius:22px; padding:28px 26px;
+    box-shadow:0 16px 40px -16px #00000060, inset 0 1px 0 #ffffff10;
+  }
+  .hl-icon{ font-size:26px; margin-bottom:14px; line-height:1; }
+  .hl-title{
+    font-family:'Shippori Mincho', serif; font-size:18px; font-weight:600;
+    color:var(--washi); margin-bottom:10px;
+  }
+  .hl-body{
+    font-size:14px; color:rgba(255,255,255,0.65);
+    line-height:1.65; font-weight:300;
+  }
+
   /* ===== BIRTHDAY ===== */
   .birthday{ text-align:center; position:relative; overflow:hidden; }
   .birthday::before{
@@ -466,10 +494,10 @@
     <p class="deck">We caught a good exchange rate window for that trip and it made everything feel like a steal. Japan's in a similar window right now — flights are cheap and the dollar is going further than it has in years. That combination doesn't last forever.</p>
 
     <div class="headline-stat">
-      <div class="big">$2,661</div>
+      <div class="big">$2,889</div>
       <div class="stack">
         <div class="t1">Total per person, nine nights</div>
-        <div class="t2">Tokyo · Hakone · Kyoto, fully loaded — flights, hotels, food, trains, the works</div>
+        <div class="t2">Tokyo · Hakone · Fuji · Kyoto, fully loaded — flights, hotels, food, trains, activities, the works</div>
       </div>
     </div>
 
@@ -490,13 +518,13 @@
       <div class="bc-title">Full breakdown · per person</div>
       <div class="budget-row"><div><div class="label">Flights</div><div class="note">ZIPAIR direct, round trip</div></div><div class="amt">$826</div></div>
       <div class="budget-row"><div><div class="label">Lodging</div><div class="note">3 Tokyo · 2 Hakone ryokan · 4 Kyoto</div></div><div class="amt">$845</div></div>
-      <div class="budget-row"><div><div class="label">Trains</div><div class="note">Tokyo → Hakone → Kyoto + local</div></div><div class="amt">$200</div></div>
+      <div class="budget-row"><div><div class="label">Trains</div><div class="note">Odakyu · Shinkansen · buses · local IC card</div></div><div class="amt">$258</div></div>
       <div class="budget-row"><div><div class="label">Food</div><div class="note">~$60/day × 9 days</div></div><div class="amt">$540</div></div>
-      <div class="budget-row"><div><div class="label">Activities</div><div class="note">Temples, onsen, entry fees</div></div><div class="amt">$150</div></div>
+      <div class="budget-row"><div><div class="label">Activities</div><div class="note">MariCAR · teamLab · paragliding · river boat · e-bike · tea · sake</div></div><div class="amt">$320</div></div>
       <div class="budget-row"><div><div class="label">Birthday dinner</div><div class="note">The splurge night, Kyoto</div></div><div class="amt">$100</div></div>
-      <div class="budget-row total"><div class="label">Total per person</div><div class="amt">~$2,661</div></div>
+      <div class="budget-row total"><div class="label">Total per person</div><div class="amt">~$2,889</div></div>
     </div>
-    <div class="money-note">That's about $350 back in your pocket on flights alone before the trip even starts — over $2,000 saved across the six of us. Leaves roughly $340 of buffer per person under a $3,000 cap.</div>
+    <div class="money-note">That's about $350 back in your pocket on flights alone before the trip even starts — over $2,000 saved across the six of us. Total lands at ~$2,889/person with activities, leaving roughly $111 of buffer under a $3,000 cap.</div>
   </section>
 
   <!-- ===== ITINERARY — EXPERIENCE NARRATIVE + MAP ===== -->
@@ -600,10 +628,10 @@
         <div class="exp-detail" id="detail-fuji">
           <div class="exp-detail-inner">
             <div class="act-grid">
-              <div class="act-card"><div class="act-icon">🪂</div><div class="act-name">Paragliding</div><div class="act-desc">Launch off a hillside above Kawaguchiko with Fuji filling the horizon directly ahead. Tandem with an instructor, no experience needed. This is the one story everyone brings home from this stop.</div><div class="act-cost">~$100/person · 30–40min</div></div>
-              <div class="act-card"><div class="act-icon">🏔️</div><div class="act-name">Fuji 5th Station</div><div class="act-desc">Drive or bus up to 2,300m on Fuji's slope — as high as you can go without climbing gear. The mountain's scale only makes sense when you're on it. Best fallback if paragliding closes.</div><div class="act-cost">~$5 bus</div></div>
-              <div class="act-card"><div class="act-icon">🏯</div><div class="act-name">Chureito Pagoda</div><div class="act-desc">A five-story red pagoda framed in front of Fuji, 398 steps up. Views of the lake and mountain together. The most recognizable Japan shot on earth and you can walk to it.</div><div class="act-cost">Free · 30min hike</div></div>
-              <div class="act-card"><div class="act-icon">🚴</div><div class="act-name">Lake Kawaguchi Circuit</div><div class="act-desc">Rent bikes and circle the lake with Fuji reflected in the water on calm mornings. Good casual morning before heading to Kyoto — scenic and unhurried.</div><div class="act-cost">~$10/person</div></div>
+              <div class="act-card"><div class="act-icon">🪂</div><div class="act-name">Paragliding</div><div class="act-desc">Launch off a hillside above Kawaguchiko with Fuji filling the horizon directly ahead. Tandem with an instructor, no experience needed. Weather-dependent — operators run when winds allow, which is most days in March.</div><div class="act-cost">~$100/person · 30–40min</div></div>
+              <div class="act-card"><div class="act-icon">🏯</div><div class="act-name">Chureito Pagoda</div><div class="act-desc">A five-story red pagoda framed in front of Fuji, 398 steps up. Views of the lake and mountain together. The most recognizable Japan shot on earth — accessible year-round and worth the climb.</div><div class="act-cost">Free · 30min hike</div></div>
+              <div class="act-card"><div class="act-icon">🚴</div><div class="act-name">Lake Kawaguchi Circuit</div><div class="act-desc">Rent bikes and circle the lake with Fuji reflected in the water on calm mornings. Relaxed half-morning before heading to Kyoto — the best way to see the lake at ground level.</div><div class="act-cost">~$10/person</div></div>
+              <div class="act-card"><div class="act-icon">🌄</div><div class="act-name">Fuji Panorama Ropeway</div><div class="act-desc">Short ropeway up Mt. Kachi Kachi above the lake — Fuji views from 1,075m without the Subaru Line road, which is closed until late April. Operates year-round, 10 min from the station.</div><div class="act-cost">~$12/person</div></div>
             </div>
             <button class="back-btn" onclick="toggleDetail('detail-fuji',document.querySelector('[data-detail=detail-fuji]'))">↑ Back to overview</button>
           </div>
@@ -655,6 +683,32 @@
     <h2 class="jp-display">Happy Birthday, Anicka.</h2>
     <p>Dinner in Gion, no early flight the next morning to hold anyone back — we don't leave until 2:45 PM on the 15th. This is the night to go all out.</p>
     <div class="seal">祝</div>
+  </section>
+
+  <section class="highlights sakura-bg">
+    <div class="hl-label">The whole thing, at a glance</div>
+    <div class="hl-grid">
+      <div class="hl-card">
+        <div class="hl-icon">✈️</div>
+        <div class="hl-title">Cheap flights</div>
+        <div class="hl-body">$826 round trip, nonstop LAX → Tokyo. Typical price is $1,170. We're saving $344/person before we even land — over $2,000 across the group.</div>
+      </div>
+      <div class="hl-card">
+        <div class="hl-icon">⚡</div>
+        <div class="hl-title">Killer activities</div>
+        <div class="hl-body">Go-karts through Shibuya · Volcanic crater walk · Paragliding with Fuji in the backdrop · Wooden boat through river gorge rapids · E-bikes through bamboo and temples · Sunrise hike before the crowds</div>
+      </div>
+      <div class="hl-card">
+        <div class="hl-icon">🏮</div>
+        <div class="hl-title">Cultural experiences</div>
+        <div class="hl-body">Guided tea ceremony · Sake tastings in a 400-year-old brewery district · Onsen hot spring soak at a mountain ryokan · Kaiseki multi-course dinner · Thousand orange gates at dawn</div>
+      </div>
+      <div class="hl-card">
+        <div class="hl-icon">💴</div>
+        <div class="hl-title">Back home without breaking the bank</div>
+        <div class="hl-body">Nine nights, four cities, flights + hotels + trains + food + every activity on this list — ~$2,889 per person. Under three grand, all in.</div>
+      </div>
+    </div>
   </section>
 
   <section class="closing sakura-bg">
