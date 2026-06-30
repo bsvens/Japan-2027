@@ -17,6 +17,8 @@
     --washi-dim:#ece4d3;
     --gold:#c9a227;
     --ink:#26241f;
+    --glass-bg:rgba(255,255,255,0.42);
+    --glass-border:rgba(255,255,255,0.65);
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html{scroll-behavior:smooth;}
@@ -30,89 +32,95 @@
   .jp-display{font-family:'Noto Serif JP', serif;}
   .jp-serif{font-family:'Shippori Mincho', serif;}
 
+  /* ===== FLAG INTRO — flowing silk ===== */
   #flag-intro{
     position:fixed; inset:0; z-index:200;
-    background:#ffffff;
+    background:radial-gradient(ellipse at 50% 40%, #fffdf8 0%, #f1ece1 70%, #e8e1d2 100%);
     display:flex; align-items:center; justify-content:center;
     overflow:hidden;
+    cursor:pointer;
   }
-  #flag-intro .flag{
+  .silk-wrap{
     position:relative;
-    width:min(62vw, 360px);
+    z-index:3;
+    width:min(60vw, 340px);
     aspect-ratio:3/2;
-    background:#ffffff;
-    box-shadow:0 18px 60px #00000022;
-    display:flex; align-items:center; justify-content:center;
+    filter:url(#ripple);
     opacity:0;
-    animation:flagIn 1.1s ease forwards 0.2s;
+    animation:silkIn 1.6s cubic-bezier(.22,1,.36,1) forwards 0.3s;
   }
-  @keyframes flagIn{
-    from{ opacity:0; transform:translateY(14px) scale(0.97); }
-    to{ opacity:1; transform:translateY(0) scale(1); }
+  @keyframes silkIn{
+    from{ opacity:0; transform:translateY(20px) scale(0.94); filter:blur(8px) url(#ripple); }
+    to{ opacity:1; transform:translateY(0) scale(1); filter:blur(0px) url(#ripple); }
   }
-  #flag-intro .disc{
-    width:38%; height:76%;
-    background:var(--hinomaru);
+  .silk{
+    position:absolute; inset:0;
+    background:linear-gradient(135deg, #ffffff 0%, #fbfaf6 50%, #ffffff 100%);
+    box-shadow:0 30px 80px -20px #00000030, inset 0 0 40px #ffffff;
+    border-radius:3px;
+  }
+  .silk .disc-glow{
+    position:absolute; left:50%; top:50%;
+    width:42%; aspect-ratio:1;
+    transform:translate(-50%,-50%);
     border-radius:50%;
-    animation:breathe 2.6s ease-in-out infinite 1.3s;
+    background:radial-gradient(circle at 38% 32%, #e8324f 0%, var(--hinomaru) 55%, var(--hinomaru-deep) 100%);
+    box-shadow:0 0 50px 6px #bc002d33, inset -6px -10px 18px #6e0018aa, inset 6px 8px 14px #ff5d7a55;
+    animation:discBreathe 4s ease-in-out infinite 1.6s;
   }
-  @keyframes breathe{
-    0%,100%{ transform:scale(1); filter:brightness(1); }
-    50%{ transform:scale(1.035); filter:brightness(1.06); }
+  @keyframes discBreathe{
+    0%,100%{ transform:translate(-50%,-50%) scale(1); }
+    50%{ transform:translate(-50%,-50%) scale(1.025); }
   }
-  #flag-intro .label{
-    position:absolute;
-    bottom:-46px; left:0; right:0; text-align:center;
+  .silk-label{
+    position:absolute; bottom:-50px; left:0; right:0; text-align:center;
     font-family:'Shippori Mincho', serif;
     font-size:13px; letter-spacing:0.35em;
     color:var(--ink); opacity:0;
-    animation:fadeUp 1s ease forwards 1.1s;
+    animation:fadeUp 1.2s ease forwards 1.5s;
   }
   @keyframes fadeUp{
     from{ opacity:0; transform:translateY(8px); }
-    to{ opacity:0.6; transform:translateY(0); }
+    to{ opacity:0.55; transform:translateY(0); }
   }
 
   .petal{
     position:absolute; top:-5%;
-    width:14px; height:14px;
+    width:13px; height:13px;
     background:var(--hinomaru);
-    opacity:0.5;
+    opacity:0.45;
     border-radius:60% 0 60% 0;
     animation:fall linear forwards;
+    z-index:1;
   }
   @keyframes fall{
     to{ transform:translate(var(--dx), 115vh) rotate(var(--rot)); opacity:0; }
   }
 
-  #flag-intro.open .flag{
+  /* open sequence: soft dissolve + light bloom, no hard wipe */
+  #flag-intro.open{
+    transition:opacity 1.1s ease 0.5s;
+  }
+  #flag-intro.open .silk-wrap{
+    transition:transform 1.6s cubic-bezier(.22,1,.36,1), opacity 1.3s ease;
+    transform:scale(1.5);
+    opacity:0;
+  }
+  #flag-intro.open .disc-glow{
     animation:none;
-    transition:transform 1.4s cubic-bezier(.65,0,.35,1), opacity 1.2s ease 0.3s;
+    transition:transform 1.6s cubic-bezier(.22,1,.36,1), box-shadow 1.6s ease;
+    transform:translate(-50%,-50%) scale(2.4);
+    box-shadow:0 0 120px 60px #bc002d55, inset 0 0 0 #0000;
   }
-  #flag-intro.open .disc{
-    animation:none;
-    transition:transform 1.5s cubic-bezier(.65,0,.35,1);
-    transform:scale(7);
-  }
-  #flag-intro.open .flag{ transform:scale(1.15); opacity:0; }
-  #flag-intro.open .label{ transition:opacity 0.4s ease; opacity:0; }
-
-  #flag-intro .panel{
-    position:absolute; top:0; bottom:0;
-    width:51%;
-    background:#ffffff;
-    z-index:2;
-  }
-  #flag-intro .panel.l{ left:0; }
-  #flag-intro .panel.r{ right:0; }
-  #flag-intro.open .panel.l{ transform:translateX(-100%); transition:transform 1.3s cubic-bezier(.76,0,.24,1) 0.55s; }
-  #flag-intro.open .panel.r{ transform:translateX(100%); transition:transform 1.3s cubic-bezier(.76,0,.24,1) 0.55s; }
+  #flag-intro.open .silk-label{ transition:opacity 0.4s ease; opacity:0; }
+  #flag-intro.open{ opacity:0; pointer-events:none; }
   #flag-intro.hidden{ display:none; }
+
   #flag-intro .tap{
-    position:absolute; bottom:60px; left:0; right:0; text-align:center;
-    font-family:'Work Sans', sans-serif; font-size:12px; letter-spacing:0.18em;
+    position:absolute; bottom:64px; left:0; right:0; text-align:center;
+    font-family:'Work Sans', sans-serif; font-size:12px; letter-spacing:0.2em;
     text-transform:uppercase; color:var(--ink); opacity:0;
-    animation:fadeUp 1s ease forwards 2s;
+    animation:fadeUp 1.2s ease forwards 2.3s;
     z-index:3;
   }
   #flag-intro.open .tap{ transition:opacity 0.3s ease; opacity:0; animation:none; }
@@ -120,17 +128,40 @@
   section{ padding:110px 8vw; position:relative; }
   @media (max-width:720px){ section{ padding:70px 6vw; } }
 
-  .seal-frame{
-    width:100%;
-    aspect-ratio:4/3;
-    border-radius:50%;
-    overflow:hidden;
-    border:6px solid var(--hinomaru);
-    box-shadow:0 0 0 3px var(--washi), 0 0 0 4px var(--hinomaru-deep);
+  /* ===== decorative blur blobs (give the glass something to refract) ===== */
+  .blob{
+    position:absolute; border-radius:50%;
+    filter:blur(50px);
+    z-index:0; pointer-events:none;
   }
-  .seal-frame img{ width:100%; height:100%; object-fit:cover; display:block; }
-  @media (max-width:560px){ .seal-frame{ border-width:4px; } }
 
+  /* ===== GLASS CARD ===== */
+  .glass-card{
+    position:relative; z-index:1;
+    border-radius:26px;
+    background:var(--glass-bg);
+    border:1px solid var(--glass-border);
+    -webkit-backdrop-filter:blur(18px) saturate(160%);
+    backdrop-filter:blur(18px) saturate(160%);
+    box-shadow:0 18px 40px -16px #00000022, inset 0 1px 0 #ffffffaa;
+    padding:22px 22px 26px;
+    overflow:hidden;
+  }
+  .glass-card .cap-top{ margin-bottom:14px; }
+  .glass-card .cap-top .day{
+    font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--hinomaru); font-weight:600;
+  }
+  .glass-card .cap-top h3{
+    font-family:'Shippori Mincho', serif; font-size:22px; margin-top:6px; font-weight:600;
+  }
+  .glass-photo{
+    width:100%; aspect-ratio:4/3; border-radius:16px; overflow:hidden;
+    box-shadow:inset 0 0 0 1px #ffffff55;
+  }
+  .glass-photo img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .glass-card p.desc{ font-size:14px; opacity:0.72; margin-top:14px; line-height:1.6; font-weight:300; }
+
+  /* ===== HERO ===== */
   .hero{
     min-height:100vh;
     background:
@@ -173,6 +204,8 @@
     background:#ffffff22;
     max-width:620px;
     flex-wrap:wrap;
+    border-radius:14px;
+    overflow:hidden;
   }
   .date-cell{
     background:var(--kuro);
@@ -204,19 +237,27 @@
     line-height:1.7;
   }
 
+  /* ===== SAVINGS ===== */
   .savings{ background:var(--kuro); color:var(--washi); }
   .savings .head{ display:flex; align-items:baseline; gap:20px; flex-wrap:wrap; margin-bottom:18px; }
   .savings .tag{
     font-size:12px; letter-spacing:0.2em; text-transform:uppercase;
-    color:var(--hinomaru); border:1px solid var(--hinomaru); padding:5px 12px;
+    color:var(--hinomaru); border:1px solid var(--hinomaru); padding:5px 12px; border-radius:100px;
   }
   .savings h2{ font-family:'Noto Serif JP', serif; font-weight:700; font-size:clamp(28px,4.5vw,46px); }
   .savings .deck{
     max-width:62ch; color:#ffffffaa; font-weight:300; font-size:16px; line-height:1.7; margin-bottom:52px;
   }
-  .compare{ display:grid; grid-template-columns:1fr 1fr; gap:1px; background:#ffffff1f; max-width:720px; }
+  .compare{ display:grid; grid-template-columns:1fr 1fr; gap:14px; max-width:720px; }
   @media (max-width:600px){ .compare{ grid-template-columns:1fr; } }
-  .compare .col{ background:var(--kuro); padding:32px; }
+  .compare .col{
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.12);
+    -webkit-backdrop-filter:blur(12px);
+    backdrop-filter:blur(12px);
+    border-radius:20px;
+    padding:32px;
+  }
   .compare .col .l{ font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#ffffff66; margin-bottom:10px; }
   .compare .col .v{ font-family:'Noto Serif JP', serif; font-size:36px; font-weight:700; }
   .compare .col.old .v{ color:#ffffff77; text-decoration:line-through; text-decoration-color:var(--hinomaru); }
@@ -224,29 +265,27 @@
   .compare .col .s{ font-size:13px; color:#ffffff88; margin-top:10px; font-weight:300; }
   .savings-note{ margin-top:28px; max-width:60ch; font-size:14px; color:#ffffff77; line-height:1.7; font-weight:300; }
 
-  .act-head{ display:flex; align-items:baseline; gap:18px; flex-wrap:wrap; margin-bottom:14px; }
+  /* ===== ACTS ===== */
+  .act-head{ display:flex; align-items:baseline; gap:18px; flex-wrap:wrap; margin-bottom:14px; position:relative; z-index:1; }
   .act-num{
     font-family:'Noto Serif JP', serif; font-size:14px; color:var(--hinomaru);
     border-bottom:2px solid var(--hinomaru); padding-bottom:2px;
   }
   .act-title{ font-family:'Noto Serif JP', serif; font-weight:700; font-size:clamp(32px,5vw,54px); }
-  .act-deck{ max-width:60ch; color:var(--ink); opacity:0.75; font-weight:300; font-size:16px; line-height:1.7; margin-bottom:48px; }
+  .act-deck{ max-width:60ch; color:var(--ink); opacity:0.75; font-weight:300; font-size:16px; line-height:1.7; margin-bottom:48px; position:relative; z-index:1; }
 
-  .stop-grid{ display:grid; grid-template-columns:repeat(2, 1fr); gap:40px; }
+  .stop-grid{ display:grid; grid-template-columns:repeat(2, 1fr); gap:28px; position:relative; z-index:1; }
   @media (max-width:680px){ .stop-grid{ grid-template-columns:1fr; } }
-  .stop .cap{ margin-top:18px; }
-  .stop .cap .day{ font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--hinomaru); font-weight:600; }
-  .stop .cap h3{ font-family:'Shippori Mincho', serif; font-size:21px; margin-top:6px; font-weight:600; }
-  .stop .cap p{ font-size:14px; opacity:0.7; margin-top:8px; line-height:1.6; font-weight:300; }
 
   .act-tokyo{ background:var(--washi); }
   .act-hakone{ background:var(--washi-dim); }
   .act-kyoto{ background:var(--washi); }
 
+  /* ===== BIRTHDAY ===== */
   .birthday{ background:var(--kuro); color:var(--washi); text-align:center; position:relative; overflow:hidden; }
   .birthday::before{
     content:""; position:absolute; width:480px; height:480px; background:var(--hinomaru);
-    border-radius:50%; top:-200px; right:-160px; opacity:0.18;
+    border-radius:50%; top:-200px; right:-160px; opacity:0.18; filter:blur(10px);
   }
   .birthday .tag{ font-size:12px; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); position:relative; }
   .birthday h2{ font-family:'Noto Serif JP', serif; font-weight:900; font-size:clamp(34px,6vw,64px); margin-top:18px; position:relative; }
@@ -255,11 +294,17 @@
     font-size:16px; font-weight:300; opacity:0.85; line-height:1.75; position:relative;
   }
   .birthday .seal{
-    margin:36px auto 0; width:90px; height:90px; border:3px solid var(--hinomaru); border-radius:50%;
+    margin:36px auto 0; width:88px; height:88px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.18);
+    -webkit-backdrop-filter:blur(10px);
+    backdrop-filter:blur(10px);
     display:flex; align-items:center; justify-content:center;
-    font-family:'Shippori Mincho', serif; font-size:13px; color:var(--hinomaru); position:relative;
+    font-family:'Shippori Mincho', serif; font-size:30px; color:var(--hinomaru); position:relative;
   }
 
+  /* ===== BUDGET ===== */
   .budget{ background:var(--washi); }
   table{ width:100%; border-collapse:collapse; margin-top:24px; }
   th,td{ text-align:left; padding:18px 10px; border-bottom:1px solid #00000018; font-size:15px; }
@@ -280,13 +325,22 @@
 </head>
 <body>
 
+<svg width="0" height="0" style="position:absolute">
+  <filter id="ripple">
+    <feTurbulence type="fractalNoise" baseFrequency="0.012 0.04" numOctaves="2" seed="7" result="noise">
+      <animate attributeName="baseFrequency" values="0.012 0.04;0.016 0.05;0.012 0.04" dur="6s" repeatCount="indefinite"/>
+    </feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="noise" scale="6" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+
 <div id="flag-intro">
-  <div class="flag">
-    <div class="disc"></div>
-    <div class="label">日本 · 二〇二七</div>
+  <div class="silk-wrap">
+    <div class="silk">
+      <div class="disc-glow"></div>
+    </div>
+    <div class="silk-label">日本 · 二〇二七</div>
   </div>
-  <div class="panel l"></div>
-  <div class="panel r"></div>
   <div class="tap">tap to enter</div>
 </div>
 
@@ -336,6 +390,8 @@
   </section>
 
   <section class="act act-tokyo">
+    <div class="blob" style="width:340px; height:340px; top:60px; left:-100px; background:radial-gradient(circle, #bc002d22, transparent 70%);"></div>
+    <div class="blob" style="width:260px; height:260px; bottom:0; right:-60px; background:radial-gradient(circle, #c9a22722, transparent 70%);"></div>
     <div class="act-head">
       <span class="act-num">一 · ACT ONE</span>
       <span class="act-title jp-display">Tokyo</span>
@@ -343,30 +399,31 @@
     <p class="act-deck">Three nights to land, settle in, and hit the version of Tokyo everyone pictures — old temple gates by day, neon streets by night.</p>
 
     <div class="stop-grid">
-      <div class="stop">
-        <div class="seal-frame">
-          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Sensoji%202023.jpg" alt="Senso-ji Temple, Asakusa">
-        </div>
-        <div class="cap">
+      <div class="glass-card">
+        <div class="cap-top">
           <div class="day">Day 2 · Mar 6</div>
           <h3>Senso-ji Temple</h3>
-          <p>Tokyo's oldest temple, a giant red lantern gate, and a market street leading right up to it.</p>
         </div>
+        <div class="glass-photo">
+          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Sensoji%202023.jpg" alt="Senso-ji Temple, Asakusa">
+        </div>
+        <p class="desc">Tokyo's oldest temple, a giant red lantern gate, and a market street leading right up to it.</p>
       </div>
-      <div class="stop">
-        <div class="seal-frame">
-          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Shibuya%20crossing.jpg" alt="Shibuya Crossing, Tokyo">
-        </div>
-        <div class="cap">
+      <div class="glass-card">
+        <div class="cap-top">
           <div class="day">Day 2–3</div>
           <h3>Shibuya &amp; Shinjuku</h3>
-          <p>The neon, the crossing, the izakaya alleys — this is the postcard shot of Tokyo at night.</p>
         </div>
+        <div class="glass-photo">
+          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Shibuya%20crossing.jpg" alt="Shibuya Crossing, Tokyo">
+        </div>
+        <p class="desc">The neon, the crossing, the izakaya alleys — this is the postcard shot of Tokyo at night.</p>
       </div>
     </div>
   </section>
 
   <section class="act act-hakone">
+    <div class="blob" style="width:300px; height:300px; top:0; right:-100px; background:radial-gradient(circle, #5c6b4f22, transparent 70%);"></div>
     <div class="act-head">
       <span class="act-num">二 · ACT TWO</span>
       <span class="act-title jp-display">Hakone</span>
@@ -374,30 +431,31 @@
     <p class="act-deck">Two nights, complete change of pace. Mountains, a lake, a hot spring — the reset between Tokyo and Kyoto.</p>
 
     <div class="stop-grid">
-      <div class="stop">
-        <div class="seal-frame">
-          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/LakeAshi%20and%20MtFuji%20Hakone.JPG" alt="Lake Ashi and Mount Fuji, Hakone">
-        </div>
-        <div class="cap">
+      <div class="glass-card">
+        <div class="cap-top">
           <div class="day">Day 4 · Mar 8</div>
           <h3>Lake Ashi &amp; Mt. Fuji</h3>
-          <p>A scenic lake cruise with Fuji in the background, weather permitting. Slow, quiet, completely different from Tokyo.</p>
         </div>
+        <div class="glass-photo">
+          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/LakeAshi%20and%20MtFuji%20Hakone.JPG" alt="Lake Ashi and Mount Fuji, Hakone">
+        </div>
+        <p class="desc">A scenic lake cruise with Fuji in the background, weather permitting. Slow, quiet, completely different from Tokyo.</p>
       </div>
-      <div class="stop">
-        <div class="seal-frame">
-          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Cherry%20Blossom%20Inokashira.JPG" alt="Spring in Japan">
-        </div>
-        <div class="cap">
+      <div class="glass-card">
+        <div class="cap-top">
           <div class="day">Day 5 · Mar 9</div>
           <h3>Onsen &amp; Ryokan</h3>
-          <p>A traditional inn with a natural hot spring bath and a multi-course dinner. No itinerary — this day is the point.</p>
         </div>
+        <div class="glass-photo">
+          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Cherry%20Blossom%20Inokashira.JPG" alt="Spring in Japan">
+        </div>
+        <p class="desc">A traditional inn with a natural hot spring bath and a multi-course dinner. No itinerary — this day is the point.</p>
       </div>
     </div>
   </section>
 
   <section class="act act-kyoto">
+    <div class="blob" style="width:320px; height:320px; bottom:-80px; left:-80px; background:radial-gradient(circle, #bc002d22, transparent 70%);"></div>
     <div class="act-head">
       <span class="act-num">三 · ACT THREE</span>
       <span class="act-title jp-display">Kyoto</span>
@@ -405,35 +463,35 @@
     <p class="act-deck">Four nights — the traditional side of Japan. Thousands of orange gates, a bamboo forest, lantern-lit streets. The birthday lands here.</p>
 
     <div class="stop-grid">
-      <div class="stop">
-        <div class="seal-frame">
-          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Fushimi-Inari-taisha%20sembon-torii.jpg" alt="Fushimi Inari Shrine, thousands of torii gates">
-        </div>
-        <div class="cap">
+      <div class="glass-card">
+        <div class="cap-top">
           <div class="day">Day 7 · Mar 11</div>
           <h3>Fushimi Inari</h3>
-          <p>Thousands of orange gates climbing the mountain. The most photographed stop of the whole trip.</p>
         </div>
+        <div class="glass-photo">
+          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Fushimi-Inari-taisha%20sembon-torii.jpg" alt="Fushimi Inari Shrine, thousands of torii gates">
+        </div>
+        <p class="desc">Thousands of orange gates climbing the mountain. The most photographed stop of the whole trip.</p>
       </div>
-      <div class="stop">
-        <div class="seal-frame">
-          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Arashiyama%20Bamboo%20Grove%20(Unsplash).jpg" alt="Arashiyama Bamboo Grove, Kyoto">
-        </div>
-        <div class="cap">
+      <div class="glass-card">
+        <div class="cap-top">
           <div class="day">Day 8 · Mar 12</div>
           <h3>Arashiyama Bamboo Grove</h3>
-          <p>Towering bamboo forming a green tunnel, plus a monkey park overlooking the city.</p>
         </div>
+        <div class="glass-photo">
+          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Arashiyama%20Bamboo%20Grove%20(Unsplash).jpg" alt="Arashiyama Bamboo Grove, Kyoto">
+        </div>
+        <p class="desc">Towering bamboo forming a green tunnel, plus a monkey park overlooking the city.</p>
       </div>
-      <div class="stop">
-        <div class="seal-frame">
-          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Gion%20Alley%20at%20Night.jpg" alt="Gion district at night, Kyoto">
-        </div>
-        <div class="cap">
+      <div class="glass-card">
+        <div class="cap-top">
           <div class="day">Evenings</div>
           <h3>Gion</h3>
-          <p>Old wooden streets, lantern light, Kyoto's traditional district — our birthday dinner setting.</p>
         </div>
+        <div class="glass-photo">
+          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Gion%20Alley%20at%20Night.jpg" alt="Gion district at night, Kyoto">
+        </div>
+        <p class="desc">Old wooden streets, lantern light, Kyoto's traditional district — our birthday dinner setting.</p>
       </div>
     </div>
   </section>
@@ -494,10 +552,9 @@
   function openFlag(){
     if(intro.classList.contains('open')) return;
     intro.classList.add('open');
-    setTimeout(()=>{ intro.classList.add('hidden'); }, reduceMotion ? 200 : 1900);
+    setTimeout(()=>{ intro.classList.add('hidden'); }, reduceMotion ? 200 : 2000);
   }
   intro.addEventListener('click', openFlag);
-  setTimeout(openFlag, reduceMotion ? 300 : 3400);
 </script>
 
 </body>
