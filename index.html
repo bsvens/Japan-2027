@@ -7,6 +7,24 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700;900&family=Shippori+Mincho:wght@500;600;700&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+  /* Leaflet map label overrides */
+  .leaflet-tooltip.map-label{
+    background:rgba(10,10,11,0.88);
+    border:1px solid rgba(255,255,255,0.14);
+    -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+    color:rgba(246,241,230,0.92);
+    font-family:'Work Sans', sans-serif;
+    font-size:11px; font-weight:500;
+    padding:5px 12px; border-radius:100px;
+    white-space:nowrap;
+    box-shadow:0 4px 16px rgba(0,0,0,0.5);
+  }
+  .leaflet-tooltip.map-label::before{ display:none; }
+  .leaflet-control-attribution{ font-size:9px; opacity:0.35; background:transparent !important; color:#fff !important; }
+  .leaflet-attribution-flag{ display:none !important; }
+</style>
 <style>
   :root{
     --kuro:#0a0a0b;
@@ -233,7 +251,7 @@
   .budget-row.total .amt{ color:var(--hinomaru); font-size:26px; }
   .money-note{ margin-top:8px; max-width:60ch; font-size:13px; color:#ffffff77; line-height:1.7; position:relative; z-index:1; }
 
-  /* ===== ITINERARY — one streamlined glass card ===== */
+  /* ===== ITINERARY — experience narrative + map ===== */
   .itin .head-row{ display:flex; align-items:baseline; gap:18px; flex-wrap:wrap; margin-bottom:14px; position:relative; z-index:1; }
   .itin .tag{
     font-size:12px; letter-spacing:0.2em; text-transform:uppercase; color:var(--hinomaru);
@@ -242,43 +260,52 @@
   .itin h2{ font-family:'Noto Serif JP', serif; font-weight:700; font-size:clamp(28px,4.5vw,46px); position:relative; z-index:1; }
   .itin .deck{ max-width:62ch; color:#ffffffaa; font-weight:300; font-size:16px; line-height:1.7; margin-bottom:44px; position:relative; z-index:1; }
 
+  /* route map */
+  .route-map{
+    position:relative; z-index:1; width:100%; max-width:760px;
+    border-radius:26px; background:var(--glass-bg); border:1px solid var(--glass-border);
+    -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px);
+    box-shadow:0 20px 50px -20px #000000a0, inset 0 1px 0 #ffffff14;
+    padding:32px; margin-bottom:48px; overflow:hidden;
+  }
+  .route-map svg{ width:100%; height:auto; display:block; }
+
+  /* experience card */
   .itin-card{
     position:relative; z-index:1;
-    border-radius:30px;
-    background:var(--glass-bg);
-    border:1px solid var(--glass-border);
-    -webkit-backdrop-filter:blur(26px) saturate(160%);
-    backdrop-filter:blur(26px) saturate(160%);
+    border-radius:30px; background:var(--glass-bg); border:1px solid var(--glass-border);
+    -webkit-backdrop-filter:blur(26px) saturate(160%); backdrop-filter:blur(26px) saturate(160%);
     box-shadow:0 30px 60px -24px #000000a0, inset 0 1px 0 #ffffff14;
     overflow:hidden;
   }
-  .leg-divider{
-    display:flex; align-items:center; gap:16px;
-    padding:30px 32px 18px;
+  .exp-leg{ padding:40px 36px; border-bottom:1px solid #ffffff0f; }
+  .exp-leg:last-child{ border-bottom:none; }
+  @media (max-width:600px){ .exp-leg{ padding:30px 22px; } }
+  .exp-leg-header{ display:flex; align-items:center; gap:16px; margin-bottom:22px; flex-wrap:wrap; }
+  .exp-leg-header .num{
+    font-family:'Noto Serif JP', serif; font-size:12px; color:var(--hinomaru);
+    border:1px solid var(--hinomaru); border-radius:100px; padding:4px 14px;
   }
-  .leg-divider:not(:first-child){ border-top:1px solid #ffffff14; margin-top:8px; }
-  .leg-divider .num{
-    font-family:'Noto Serif JP', serif; font-size:13px; color:var(--hinomaru);
-    border:1px solid var(--hinomaru); border-radius:100px; padding:4px 12px; white-space:nowrap;
+  .exp-leg-header .city{ font-family:'Noto Serif JP', serif; font-weight:700; font-size:28px; }
+  .exp-leg-header .dates{ font-size:12px; color:#ffffff55; margin-left:auto; white-space:nowrap; }
+  .exp-narrative{
+    font-size:16px; line-height:1.85; color:#ffffffc8; font-weight:300;
+    max-width:70ch; margin-bottom:24px;
   }
-  .leg-divider .name{ font-family:'Noto Serif JP', serif; font-weight:700; font-size:26px; color:var(--washi); }
-  .leg-divider .span{ font-size:12px; color:#ffffff66; margin-left:auto; white-space:nowrap; }
-
-  .stop-row{
-    display:grid; grid-template-columns:130px 1fr;
-    gap:20px; padding:18px 32px 26px;
-    align-items:start;
+  .exp-narrative b{ font-weight:500; color:var(--washi); }
+  .exp-photos{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:24px; }
+  @media (max-width:560px){ .exp-photos{ grid-template-columns:repeat(2,1fr); } }
+  .exp-photos img{
+    width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:14px;
+    box-shadow:inset 0 0 0 1px #ffffff11;
   }
-  @media (max-width:600px){ .stop-row{ grid-template-columns:1fr; } }
-  .stop-row .thumb{
-    width:130px; aspect-ratio:4/3; border-radius:16px; overflow:hidden;
-    box-shadow:inset 0 0 0 1px #ffffff22;
+  .exp-tags{ display:flex; flex-wrap:wrap; gap:8px; }
+  .exp-tag{
+    font-size:12px; letter-spacing:0.05em; color:#ffffffbb;
+    background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12);
+    border-radius:100px; padding:6px 14px;
   }
-  @media (max-width:600px){ .stop-row .thumb{ width:100%; aspect-ratio:16/9; } }
-  .stop-row .thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
-  .stop-row .info .day{ font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--hinomaru); font-weight:600; }
-  .stop-row .info h3{ font-family:'Shippori Mincho', serif; font-size:20px; margin-top:5px; font-weight:600; color:var(--washi); }
-  .stop-row .info p{ font-size:14px; color:#ffffffa8; margin-top:8px; line-height:1.6; font-weight:300; }
+  .exp-tag.red{ color:var(--hinomaru); border-color:var(--hinomaru); background:rgba(196,18,63,0.08); }
 
   /* ===== BIRTHDAY ===== */
   .birthday{ text-align:center; position:relative; overflow:hidden; }
@@ -399,95 +426,90 @@
     <div class="money-note">That's about $350 back in your pocket on flights alone before the trip even starts — over $2,000 saved across the six of us. Leaves roughly $340 of buffer per person under a $3,000 cap.</div>
   </section>
 
-  <!-- ===== ITINERARY — ONE GLASS CARD ===== -->
+  <!-- ===== ITINERARY — EXPERIENCE NARRATIVE + MAP ===== -->
   <section class="itin sakura-bg">
     <div class="blob" style="width:340px; height:340px; top:60px; left:-100px; background:radial-gradient(circle, #c4123f33, transparent 70%);"></div>
     <div class="blob" style="width:300px; height:300px; bottom:0; right:-100px; background:radial-gradient(circle, #c9a22733, transparent 70%);"></div>
-    <div class="head-row"><span class="tag">The Itinerary</span></div>
+    <div class="head-row"><span class="tag">The Experience</span></div>
     <h2 class="jp-display">One night in Tokyo. Everything else is the real Japan.</h2>
-    <p class="deck">We're not building a city trip — one icon in Tokyo, then straight into mountains, hot springs, and the side of Japan that actually looks like what you pictured: temples, gardens, sake breweries, and a tea ceremony, not a crowded crosswalk.</p>
+    <p class="deck">Not a city trip. A route through three completely different versions of Japan — each one built around what you're actually there to feel, not what to check off.</p>
 
+    <!-- ROUTE MAP — real Leaflet map -->
+    <div class="route-map" style="padding:0; overflow:hidden;">
+      <div id="japan-map" style="height:340px; border-radius:26px;"></div>
+    </div>
+
+    <!-- EXPERIENCE CARD -->
     <div class="itin-card">
 
-      <div class="leg-divider">
-        <span class="num">一 ACT ONE</span>
-        <span class="name jp-display">Tokyo</span>
-        <span class="span">Mar 5–6 · touchdown only</span>
-      </div>
-      <div class="stop-row">
-        <div class="thumb"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Sensoji%202023.jpg" alt="Senso-ji Temple, Asakusa"></div>
-        <div class="info">
-          <div class="day">Day 2 · Mar 6</div>
-          <h3>Senso-ji Temple</h3>
-          <p>One Tokyo icon, then we move on. Tokyo's oldest temple, a giant red lantern gate, a market street leading right up to it — in and out before the city gets a vote.</p>
+      <!-- ACT ONE: TOKYO -->
+      <div class="exp-leg">
+        <div class="exp-leg-header">
+          <span class="num">一 ACT ONE</span>
+          <span class="city jp-display">Tokyo</span>
+          <span class="dates">Mar 5–7 · 1 night</span>
+        </div>
+        <p class="exp-narrative">
+          You land, you drop your bags, and you go see <b>one thing.</b> Tokyo's oldest temple sits in a neighborhood that still moves like it's from another century — a giant red lantern gate, a covered market street leading toward it, incense in the air. That's the impression Tokyo leaves on this trip: a brief, sharp one. Then you're on a train into the mountains.
+        </p>
+        <div class="exp-photos">
+          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Sensoji%202023.jpg" alt="Senso-ji Temple">
+        </div>
+        <div class="exp-tags">
+          <span class="exp-tag">Senso-ji Temple at dusk</span>
+          <span class="exp-tag">Nakamise market street</span>
+          <span class="exp-tag">First ramen</span>
         </div>
       </div>
 
-      <div class="leg-divider">
-        <span class="num">二 ACT TWO</span>
-        <span class="name jp-display">Hakone</span>
-        <span class="span">Mar 6–8</span>
-      </div>
-      <div class="stop-row">
-        <div class="thumb"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/LakeAshi%20and%20MtFuji%20Hakone.JPG" alt="Lake Ashi and Mount Fuji, Hakone"></div>
-        <div class="info">
-          <div class="day">Day 3 · Mar 7</div>
-          <h3>Lake Ashi &amp; Mt. Fuji</h3>
-          <p>A scenic lake cruise with Fuji in the background, weather permitting. Slow, quiet, completely different from Tokyo.</p>
+      <!-- ACT TWO: HAKONE -->
+      <div class="exp-leg">
+        <div class="exp-leg-header">
+          <span class="num">二 ACT TWO</span>
+          <span class="city jp-display">Hakone</span>
+          <span class="dates">Mar 7–9 · 2 nights</span>
         </div>
-      </div>
-      <div class="stop-row">
-        <div class="thumb"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Hakone%20Yumoto%20Onsen%20Tenseien.JPG" alt="Onsen ryokan in Hakone Yumoto"></div>
-        <div class="info">
-          <div class="day">Day 4 · Mar 8</div>
-          <h3>Onsen &amp; Kaiseki Ryokan</h3>
-          <p>A traditional inn with a natural hot spring bath and a multi-course kaiseki dinner. No itinerary — this day is the point.</p>
+        <p class="exp-narrative">
+          The city disappears completely. Hakone is mountains, hot springs, and a volcanic lake with <b>Fuji sitting behind it</b> like a postcard you're standing inside. You sleep in a traditional ryokan on tatami floors — dinner is a multi-course kaiseki spread where every dish is its own event. The onsen (a natural outdoor hot spring flowing straight from volcanic ground) is what it sounds like: you sit in water that comes out of the earth hot, in the middle of the mountains, at night. Nothing about it is complicated.
+        </p>
+        <div class="exp-photos">
+          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/LakeAshi%20and%20MtFuji%20Hakone.JPG" alt="Lake Ashi and Mt Fuji">
+          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Hakone%20Yumoto%20Onsen%20Tenseien.JPG" alt="Hakone ryokan onsen">
+        </div>
+        <div class="exp-tags">
+          <span class="exp-tag red">Lake Ashi cruise</span>
+          <span class="exp-tag">Mt. Fuji views</span>
+          <span class="exp-tag red">Onsen soak</span>
+          <span class="exp-tag">Kaiseki dinner</span>
+          <span class="exp-tag">Tatami ryokan</span>
         </div>
       </div>
 
-      <div class="leg-divider">
-        <span class="num">三 ACT THREE</span>
-        <span class="name jp-display">Kyoto</span>
-        <span class="span">Mar 8–15 · the real trip</span>
-      </div>
-      <div class="stop-row">
-        <div class="thumb"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Fushimi%20Inari-taisha%20sembon-torii.jpg" alt="Fushimi Inari Shrine, thousands of torii gates"></div>
-        <div class="info">
-          <div class="day">Day 7 · Mar 11</div>
-          <h3>Fushimi Inari</h3>
-          <p>Thousands of orange gates climbing the mountain. Go at sunrise — quiet, golden light, none of the crowd.</p>
+      <!-- ACT THREE: KYOTO -->
+      <div class="exp-leg">
+        <div class="exp-leg-header">
+          <span class="num">三 ACT THREE</span>
+          <span class="city jp-display">Kyoto</span>
+          <span class="dates">Mar 9–15 · 6 nights</span>
         </div>
-      </div>
-      <div class="stop-row">
-        <div class="thumb"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Serving%20Tea%20Japanese%20Tea%20Ceremony.jpg" alt="Traditional Japanese tea ceremony"></div>
-        <div class="info">
-          <div class="day">Day 7</div>
-          <h3>Tea Ceremony</h3>
-          <p>A guided matcha ceremony in a traditional tea house — Japan's version of a wine tasting, hands-on and unhurried.</p>
+        <p class="exp-narrative">
+          Six nights because Kyoto earns them. The mornings belong to temples before the crowds arrive — <b>Fushimi Inari's thousand orange gates</b> glow gold at sunrise when almost no one else is there, and you walk up the mountain through them. The afternoons slow to a different pace: a <b>guided tea ceremony</b> in a traditional house (think: wine tasting, Japanese version), then sake tastings in the <b>Fushimi brewery district</b> — a canal-lined neighborhood of century-old breweries most tourists walk past without knowing what they're seeing.
+        </p>
+        <p class="exp-narrative" style="margin-top:-8px;">
+          One morning is Arashiyama — the bamboo grove that actually looks like another planet, plus a monkey park on the hill above it with views over the city. Evenings in Gion, Kyoto's old district, are the Europe comparison that actually lands: beautiful architecture, quiet streets, lantern light, extraordinary food. And <b>March 14</b> is the birthday.
+        </p>
+        <div class="exp-photos">
+          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Fushimi%20Inari-taisha%20sembon-torii.jpg" alt="Fushimi Inari torii gates">
+          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Arashiyama%20Bamboo%20Grove%20(Unsplash).jpg" alt="Arashiyama Bamboo Grove">
+          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Gion%20Alley%20at%20Night.jpg" alt="Gion at night">
         </div>
-      </div>
-      <div class="stop-row">
-        <div class="thumb"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Kyoto%20Fushimi%20Matsumoto%20Sake%20Brewing02st3200.jpg" alt="Sake brewery in the Fushimi district, Kyoto"></div>
-        <div class="info">
-          <div class="day">Day 8 · Mar 12</div>
-          <h3>Fushimi Sake District</h3>
-          <p>A canal-lined neighborhood of centuries-old sake breweries with tastings — the kind of place most tourists skip entirely.</p>
-        </div>
-      </div>
-      <div class="stop-row">
-        <div class="thumb"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Arashiyama%20Bamboo%20Grove%20(Unsplash).jpg" alt="Arashiyama Bamboo Grove, Kyoto"></div>
-        <div class="info">
-          <div class="day">Day 9 · Mar 13</div>
-          <h3>Arashiyama Bamboo Grove</h3>
-          <p>Towering bamboo forming a green tunnel, plus a monkey park overlooking the city. The "Avatar movie" one.</p>
-        </div>
-      </div>
-      <div class="stop-row">
-        <div class="thumb"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Gion%20Alley%20at%20Night.jpg" alt="Gion district at night, Kyoto"></div>
-        <div class="info">
-          <div class="day">Evenings</div>
-          <h3>Gion</h3>
-          <p>Old wooden streets, lantern light, Kyoto's traditional district — our birthday dinner setting.</p>
+        <div class="exp-tags">
+          <span class="exp-tag red">Fushimi Inari at sunrise</span>
+          <span class="exp-tag">Tea ceremony</span>
+          <span class="exp-tag">Sake tasting · Fushimi</span>
+          <span class="exp-tag red">Arashiyama bamboo</span>
+          <span class="exp-tag">Gion evenings</span>
+          <span class="exp-tag red">🎂 Birthday dinner · Mar 14</span>
         </div>
       </div>
 
@@ -537,6 +559,47 @@
     setTimeout(()=>{ intro.classList.add('hidden'); }, reduceMotion ? 200 : 2000);
   }
   intro.addEventListener('click', openFlag);
+</script>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  const map = L.map('japan-map', {
+    center: [35.5, 137.8],
+    zoom: 7,
+    zoomControl: false,
+    attributionControl: true,
+    scrollWheelZoom: false,
+    dragging: !L.Browser.mobile,
+    tap: false
+  });
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '© <a href="https://openstreetmap.org">OSM</a> © <a href="https://carto.com">CARTO</a>',
+    subdomains: 'abcd', maxZoom: 19
+  }).addTo(map);
+
+  const stops = [
+    { name:'Tokyo',  jp:'東京', lat:35.682, lng:139.759, color:'#c4123f', dates:'Mar 5–7' },
+    { name:'Hakone', jp:'箱根', lat:35.232, lng:139.025, color:'#c9a227', dates:'Mar 7–9' },
+    { name:'Kyoto',  jp:'京都', lat:35.011, lng:135.768, color:'#c4123f', dates:'Mar 9–15' }
+  ];
+
+  stops.forEach(s => {
+    const icon = L.divIcon({
+      className:'',
+      html:`<div style="width:14px;height:14px;background:${s.color};border-radius:50%;border:2px solid rgba(255,255,255,0.3);box-shadow:0 0 14px ${s.color}88;"></div>`,
+      iconSize:[14,14], iconAnchor:[7,7]
+    });
+    L.marker([s.lat,s.lng],{icon}).addTo(map)
+      .bindTooltip(
+        `<span style="font-family:'Noto Serif JP',serif;font-size:13px;">${s.jp}</span>&nbsp;<span style="opacity:0.6;font-size:10px;letter-spacing:0.06em;">${s.name.toUpperCase()} · ${s.dates}</span>`,
+        {permanent:true, className:'map-label', direction:'right', offset:[12,0]}
+      );
+  });
+
+  L.polyline(stops.map(s=>[s.lat,s.lng]),{
+    color:'#c4123f', weight:2, opacity:0.55, dashArray:'7 5'
+  }).addTo(map);
 </script>
 
 </body>
