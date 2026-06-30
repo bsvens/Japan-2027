@@ -752,13 +752,16 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
   const map = L.map('japan-map', {
-    center: [37.2, 136.8],
-    zoom: 5,
     zoomControl: false,
     attributionControl: true,
     scrollWheelZoom: false,
     dragging: false,
-    tap: false
+    touchZoom: false,
+    doubleClickZoom: false,
+    boxZoom: false,
+    keyboard: false,
+    tap: false,
+    zoomSnap: 0.1
   });
 
   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
@@ -767,10 +770,10 @@
   }).addTo(map);
 
   const stops = [
-    { name:'Tokyo',       jp:'東京', lat:35.682, lng:139.759, color:'#c4123f', dates:'Mar 5–7' },
-    { name:'Hakone',      jp:'箱根', lat:35.232, lng:139.025, color:'#c9a227', dates:'Mar 7–9' },
-    { name:'Kawaguchiko', jp:'富士', lat:35.509, lng:138.763, color:'#c9a227', dates:'Mar 9–10' },
-    { name:'Kyoto',       jp:'京都', lat:35.011, lng:135.768, color:'#c4123f', dates:'Mar 10–15' }
+    { name:'Tokyo',       jp:'東京', lat:35.682, lng:139.759, color:'#c4123f', dates:'Mar 5–7',   tip:'left'  },
+    { name:'Hakone',      jp:'箱根', lat:35.232, lng:139.025, color:'#c9a227', dates:'Mar 7–9',   tip:'left'  },
+    { name:'Kawaguchiko', jp:'富士', lat:35.509, lng:138.763, color:'#c9a227', dates:'Mar 9–10',  tip:'left'  },
+    { name:'Kyoto',       jp:'京都', lat:35.011, lng:135.768, color:'#c4123f', dates:'Mar 10–15', tip:'right' }
   ];
 
   stops.forEach(s => {
@@ -781,13 +784,17 @@
     });
     L.marker([s.lat,s.lng],{icon}).addTo(map).bindTooltip(
       `<span style="font-family:'Noto Serif JP',serif;font-size:13px;">${s.jp}</span>&nbsp;<span style="opacity:0.55;font-size:10px;letter-spacing:0.06em;">${s.name.toUpperCase()} · ${s.dates}</span>`,
-      {permanent:true, className:'map-label', direction:'right', offset:[10,0]}
+      {permanent:true, className:'map-label', direction:s.tip, offset:[s.tip==='right'?10:-10,0]}
     );
   });
 
   L.polyline(stops.map(s=>[s.lat,s.lng]),{
     color:'#c4123f', weight:2, opacity:0.55, dashArray:'6 5'
   }).addTo(map);
+
+  // Auto-fit to show all markers — generous left padding for Kyoto label, right padding for map edge
+  const bounds = L.latLngBounds(stops.map(s=>[s.lat,s.lng]));
+  map.fitBounds(bounds, {paddingTopLeft:[40,60], paddingBottomRight:[160,60]});
 </script>
 
 <script>
