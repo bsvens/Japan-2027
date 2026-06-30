@@ -326,6 +326,60 @@
   }
   .exp-tag.red{ color:var(--hinomaru); border-color:var(--hinomaru); background:rgba(196,18,63,0.08); }
 
+  /* ===== EXPANDABLE DETAIL PANELS ===== */
+  .exp-expand-btn{
+    display:flex; align-items:center; gap:10px;
+    margin-top:20px; padding:11px 20px;
+    background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12);
+    border-radius:100px; cursor:pointer; width:fit-content;
+    font-family:'Work Sans',sans-serif; font-size:12px; letter-spacing:0.1em;
+    text-transform:uppercase; color:rgba(246,241,230,0.7);
+    transition:all 0.2s ease; user-select:none;
+  }
+  .exp-expand-btn:hover{ background:rgba(255,255,255,0.09); color:var(--washi); }
+  .exp-expand-btn .chev{ display:inline-block; transition:transform 0.35s ease; }
+  .exp-expand-btn.is-open .chev{ transform:rotate(180deg); }
+
+  .exp-detail{
+    max-height:0; overflow:hidden;
+    transition:max-height 0.55s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease;
+    opacity:0;
+  }
+  .exp-detail.is-open{ max-height:1200px; opacity:1; }
+  .exp-detail-inner{
+    padding-top:28px; margin-top:20px;
+    border-top:1px solid rgba(255,255,255,0.08);
+  }
+  .act-grid{
+    display:grid; grid-template-columns:1fr 1fr;
+    gap:12px; margin-bottom:24px;
+  }
+  @media (max-width:560px){ .act-grid{ grid-template-columns:1fr; } }
+  .act-card{
+    background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.09);
+    border-radius:16px; padding:18px;
+  }
+  .act-card .act-icon{ font-size:22px; margin-bottom:10px; line-height:1; }
+  .act-card .act-name{
+    font-family:'Shippori Mincho',serif; font-size:16px; font-weight:600;
+    color:var(--washi); margin-bottom:6px;
+  }
+  .act-card .act-desc{ font-size:13px; color:rgba(255,255,255,0.58); line-height:1.55; font-weight:300; }
+  .act-card .act-cost{
+    display:inline-block; margin-top:10px; font-size:11px;
+    letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--gold); border:1px solid rgba(201,162,39,0.3);
+    border-radius:100px; padding:3px 10px;
+  }
+  .back-btn{
+    display:flex; align-items:center; gap:8px; margin-top:8px;
+    font-size:11px; letter-spacing:0.12em; text-transform:uppercase;
+    color:rgba(255,255,255,0.4); cursor:pointer; background:none; border:none;
+    font-family:'Work Sans',sans-serif; padding:8px 0;
+    transition:color 0.2s ease;
+  }
+  .back-btn:hover{ color:var(--washi); }
+
   /* ===== BIRTHDAY ===== */
   .birthday{ text-align:center; position:relative; overflow:hidden; }
   .birthday::before{
@@ -453,33 +507,22 @@
     <h2 class="jp-display">One night in Tokyo. Everything else is the real Japan.</h2>
     <p class="deck">Not a city trip. A route through three completely different versions of Japan — each one built around what you're actually there to feel, not what to check off.</p>
 
-    <!-- ROUTE MAP — real Leaflet map with animation -->
-    <div class="route-map" style="padding:0; overflow:hidden; position:relative;">
+    <!-- ROUTE MAP — static Leaflet -->
+    <div class="route-map" style="padding:0; overflow:hidden;">
       <div id="japan-map" style="height:420px; border-radius:26px;"></div>
-      <button id="play-btn" onclick="runTripAnimation()" style="
-        position:absolute; bottom:20px; right:20px; z-index:999;
-        background:rgba(10,10,11,0.85); border:1px solid rgba(255,255,255,0.18);
-        -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
-        color:var(--washi); font-family:'Work Sans',sans-serif;
-        font-size:12px; letter-spacing:0.1em; text-transform:uppercase;
-        padding:10px 20px; border-radius:100px; cursor:pointer;
-        display:flex; align-items:center; gap:8px;
-      ">▶ Play the journey</button>
     </div>
 
-    <!-- EXPERIENCE CARD -->
+<!-- EXPERIENCE CARD -->
     <div class="itin-card">
 
       <!-- ACT ONE: TOKYO -->
-      <div class="exp-leg">
+      <div class="exp-leg" id="leg-tokyo">
         <div class="exp-leg-header">
           <span class="num">一 ACT ONE</span>
           <span class="city jp-display">Tokyo</span>
-          <span class="dates">Mar 5–7 · 1 night</span>
+          <span class="dates">Mar 5–7 · 2 nights</span>
         </div>
-        <p class="exp-narrative">
-          You land, you drop your bags, and you go see <b>one thing.</b> Tokyo's oldest temple sits in a neighborhood that still moves like it's from another century — a giant red lantern gate, a covered market street leading toward it, incense in the air. That's the impression Tokyo leaves on this trip: a brief, sharp one. Then you're on a train into the mountains.
-        </p>
+        <p class="exp-narrative">Land, drop bags, hit the ground. Two nights of Tokyo — one temple icon, an immersive art museum you walk through barefoot, a dawn food crawl through the world's most famous fish market, and the go-kart thing that everyone who's done it says is the most fun they've had in a city. Then you're on a train into the mountains.</p>
         <div class="exp-photos one-col">
           <div class="exp-photo-card">
             <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Sensoji%202023.jpg" alt="Senso-ji Temple">
@@ -487,79 +530,127 @@
           </div>
         </div>
         <div class="exp-tags">
-          <span class="exp-tag">Senso-ji Temple at dusk</span>
-          <span class="exp-tag">Nakamise market street</span>
-          <span class="exp-tag">First ramen</span>
+          <span class="exp-tag red">MariCAR through Shibuya</span>
+          <span class="exp-tag">teamLab Planets</span>
+          <span class="exp-tag">Tsukiji dawn crawl</span>
+          <span class="exp-tag">Senso-ji at dusk</span>
+        </div>
+        <button class="exp-expand-btn" data-detail="detail-tokyo" onclick="toggleDetail('detail-tokyo',this)">What we're doing in Tokyo <span class="chev">↓</span></button>
+        <div class="exp-detail" id="detail-tokyo">
+          <div class="exp-detail-inner">
+            <div class="act-grid">
+              <div class="act-card"><div class="act-icon">🏎️</div><div class="act-name">MariCAR</div><div class="act-desc">Go-kart through Shibuya and Akihabara in costume. One of the most purely fun things you can do in any city on earth — every person who has done it says the same thing.</div><div class="act-cost">~$50/person · 2hrs</div></div>
+              <div class="act-card"><div class="act-icon">🌊</div><div class="act-name">teamLab Planets</div><div class="act-desc">Barefoot through rooms of projected water, light, and mirrors that react to your movement. Not a museum — an environment you're inside. The group will be talking about it for the rest of the trip.</div><div class="act-cost">~$32/person · 1.5hrs</div></div>
+              <div class="act-card"><div class="act-icon">🍣</div><div class="act-name">Tsukiji Market Dawn Crawl</div><div class="act-desc">6 AM, fresh tuna, grilled skewers, tamagoyaki, and the best street sushi you've ever had. No tour — just walk in and eat. Best way to start a day in Tokyo.</div><div class="act-cost">~$25/person · casual</div></div>
+              <div class="act-card"><div class="act-icon">⛩️</div><div class="act-name">Senso-ji at Dusk</div><div class="act-desc">Tokyo's oldest temple in the evening when the crowds thin. Giant red lantern gate, incense, market street alongside it. One sharp impression, then you move on.</div><div class="act-cost">Free</div></div>
+            </div>
+            <button class="back-btn" onclick="toggleDetail('detail-tokyo',document.querySelector('[data-detail=detail-tokyo]'))">↑ Back to overview</button>
+          </div>
         </div>
       </div>
 
       <!-- ACT TWO: HAKONE -->
-      <div class="exp-leg">
+      <div class="exp-leg" id="leg-hakone">
         <div class="exp-leg-header">
           <span class="num">二 ACT TWO</span>
           <span class="city jp-display">Hakone</span>
           <span class="dates">Mar 7–9 · 2 nights</span>
         </div>
-        <p class="exp-narrative">
-          The city disappears completely. Hakone is mountains, hot springs, and a volcanic lake with <b>Fuji sitting behind it</b> like a postcard you're standing inside. You sleep in a traditional ryokan on tatami floors — dinner is a multi-course kaiseki spread where every dish is its own event. The onsen (a natural outdoor hot spring flowing straight from volcanic ground) is what it sounds like: you sit in water that comes out of the earth hot, in the middle of the mountains, at night. Nothing about it is complicated.
-        </p>
+        <p class="exp-narrative">The city disappears entirely. Hakone is volcanic mountain terrain — you walk through an active crater, ride a ropeway over sulfur vents, and cruise a lake with Fuji sitting behind it. Then you check into a ryokan on tatami floors and soak in a natural hot spring that comes out of the ground hot. Two different days, completely different energy.</p>
         <div class="exp-photos two-col">
-          <div class="exp-photo-card">
-            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/LakeAshi%20and%20MtFuji%20Hakone.JPG" alt="Lake Ashi and Mt Fuji">
-            <div class="exp-photo-label red">Lake Ashi · Mt. Fuji</div>
-          </div>
-          <div class="exp-photo-card">
-            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Hakone%20Yumoto%20Onsen%20Tenseien.JPG" alt="Hakone ryokan onsen">
-            <div class="exp-photo-label red">Onsen · Ryokan night</div>
-          </div>
+          <div class="exp-photo-card"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/LakeAshi%20and%20MtFuji%20Hakone.JPG" alt="Lake Ashi and Mt Fuji"><div class="exp-photo-label red">Lake Ashi · Mt. Fuji</div></div>
+          <div class="exp-photo-card"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Hakone%20Yumoto%20Onsen%20Tenseien.JPG" alt="Hakone ryokan onsen"><div class="exp-photo-label red">Onsen · Ryokan night</div></div>
         </div>
         <div class="exp-tags">
+          <span class="exp-tag red">Owakudani volcanic crater</span>
+          <span class="exp-tag">Hakone Ropeway</span>
           <span class="exp-tag red">Lake Ashi cruise</span>
-          <span class="exp-tag">Mt. Fuji views</span>
-          <span class="exp-tag red">Onsen soak</span>
+          <span class="exp-tag">Onsen soak</span>
           <span class="exp-tag">Kaiseki dinner</span>
-          <span class="exp-tag">Tatami ryokan</span>
+        </div>
+        <button class="exp-expand-btn" data-detail="detail-hakone" onclick="toggleDetail('detail-hakone',this)">What we're doing in Hakone <span class="chev">↓</span></button>
+        <div class="exp-detail" id="detail-hakone">
+          <div class="exp-detail-inner">
+            <div class="act-grid">
+              <div class="act-card"><div class="act-icon">🌋</div><div class="act-name">Owakudani Crater Walk</div><div class="act-desc">Active volcanic valley — sulfur vents, bubbling pools, black eggs hard-boiled in volcanic spring water. You're walking through a real geothermal landscape, not looking at a photo of one.</div><div class="act-cost">~$12/person</div></div>
+              <div class="act-card"><div class="act-icon">🚡</div><div class="act-name">Hakone Ropeway</div><div class="act-desc">Cable car over the volcanic landscape to Lake Ashi — volcanic scenery below, Fuji ahead. The approach to the lake from above.</div><div class="act-cost">Included</div></div>
+              <div class="act-card"><div class="act-icon">⛵</div><div class="act-name">Lake Ashi Cruise</div><div class="act-desc">Pirate-ship-style boat across the crater lake with Fuji in the background. Scenic but moving — the bridge between the crater morning and the ryokan evening.</div><div class="act-cost">~$15/person</div></div>
+              <div class="act-card"><div class="act-icon">♨️</div><div class="act-name">Onsen + Kaiseki Ryokan</div><div class="act-desc">Natural volcanic hot spring at the ryokan — outdoor bath, mountains, night sky. Followed by a multi-course kaiseki dinner where every dish is its own event. This night is the reset.</div><div class="act-cost">Included in lodging</div></div>
+            </div>
+            <button class="back-btn" onclick="toggleDetail('detail-hakone',document.querySelector('[data-detail=detail-hakone]'))">↑ Back to overview</button>
+          </div>
         </div>
       </div>
 
-      <!-- ACT THREE: KYOTO -->
-      <div class="exp-leg">
+      <!-- ACT THREE: KAWAGUCHIKO -->
+      <div class="exp-leg" id="leg-fuji">
         <div class="exp-leg-header">
           <span class="num">三 ACT THREE</span>
-          <span class="city jp-display">Kyoto</span>
-          <span class="dates">Mar 9–15 · 6 nights</span>
+          <span class="city jp-display">Mt. Fuji</span>
+          <span class="dates">Mar 9–10 · 1 night</span>
         </div>
-        <p class="exp-narrative">
-          Six nights because Kyoto earns them. The mornings belong to temples before the crowds arrive — <b>Fushimi Inari's thousand orange gates</b> glow gold at sunrise when almost no one else is there, and you walk up the mountain through them. The afternoons slow to a different pace: a <b>guided tea ceremony</b> in a traditional house (think: wine tasting, Japanese version), then sake tastings in the <b>Fushimi brewery district</b> — a canal-lined neighborhood of century-old breweries most tourists walk past without knowing what they're seeing.
-        </p>
-        <p class="exp-narrative" style="margin-top:-8px;">
-          One morning is Arashiyama — the bamboo grove that actually looks like another planet, plus a monkey park on the hill above it with views over the city. Evenings in Gion, Kyoto's old district, are the Europe comparison that actually lands: beautiful architecture, quiet streets, lantern light, extraordinary food. And <b>March 14</b> is the birthday.
-        </p>
+        <p class="exp-narrative">Lake Kawaguchiko puts you at the base of Fuji instead of viewing it from a distance. One night — but the night with the highest ceiling. <b>Paragliding with Fuji as your backdrop</b> is the helicopter moment of this trip: you launch off a hillside, Fuji fills the entire horizon, and you're flying. March still runs weather permitting. If weather closes it, the Fuji 5th Station drive and Chureito Pagoda are legitimate fallbacks that still deliver.</p>
+        <div class="exp-tags">
+          <span class="exp-tag red">Paragliding · Fuji backdrop</span>
+          <span class="exp-tag">Fuji 5th Station</span>
+          <span class="exp-tag">Chureito Pagoda</span>
+          <span class="exp-tag">Lake Kawaguchi bike</span>
+        </div>
+        <button class="exp-expand-btn" data-detail="detail-fuji" onclick="toggleDetail('detail-fuji',this)">What we're doing at Fuji <span class="chev">↓</span></button>
+        <div class="exp-detail" id="detail-fuji">
+          <div class="exp-detail-inner">
+            <div class="act-grid">
+              <div class="act-card"><div class="act-icon">🪂</div><div class="act-name">Paragliding</div><div class="act-desc">Launch off a hillside above Kawaguchiko with Fuji filling the horizon directly ahead. Tandem with an instructor, no experience needed. This is the one story everyone brings home from this stop.</div><div class="act-cost">~$100/person · 30–40min</div></div>
+              <div class="act-card"><div class="act-icon">🏔️</div><div class="act-name">Fuji 5th Station</div><div class="act-desc">Drive or bus up to 2,300m on Fuji's slope — as high as you can go without climbing gear. The mountain's scale only makes sense when you're on it. Best fallback if paragliding closes.</div><div class="act-cost">~$5 bus</div></div>
+              <div class="act-card"><div class="act-icon">🏯</div><div class="act-name">Chureito Pagoda</div><div class="act-desc">A five-story red pagoda framed in front of Fuji, 398 steps up. Views of the lake and mountain together. The most recognizable Japan shot on earth and you can walk to it.</div><div class="act-cost">Free · 30min hike</div></div>
+              <div class="act-card"><div class="act-icon">🚴</div><div class="act-name">Lake Kawaguchi Circuit</div><div class="act-desc">Rent bikes and circle the lake with Fuji reflected in the water on calm mornings. Good casual morning before heading to Kyoto — scenic and unhurried.</div><div class="act-cost">~$10/person</div></div>
+            </div>
+            <button class="back-btn" onclick="toggleDetail('detail-fuji',document.querySelector('[data-detail=detail-fuji]'))">↑ Back to overview</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACT FOUR: KYOTO -->
+      <div class="exp-leg" id="leg-kyoto">
+        <div class="exp-leg-header">
+          <span class="num">四 ACT FOUR</span>
+          <span class="city jp-display">Kyoto</span>
+          <span class="dates">Mar 10–15 · 5 nights</span>
+        </div>
+        <p class="exp-narrative">Five nights with built-in activity density — a wooden boat through river gorge rapids, e-bikes through bamboo and temples, a sunrise hike before crowds arrive, sake brewery tastings in a neighborhood most tourists walk past. Gion in the evenings. And <b>March 14</b> closes it out right.</p>
         <div class="exp-photos three-col">
-          <div class="exp-photo-card">
-            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Fushimi%20Inari-taisha%20sembon-torii.jpg" alt="Fushimi Inari torii gates">
-            <div class="exp-photo-label red">Fushimi Inari at sunrise</div>
-          </div>
-          <div class="exp-photo-card">
-            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Arashiyama%20Bamboo%20Grove%20(Unsplash).jpg" alt="Arashiyama Bamboo Grove">
-            <div class="exp-photo-label red">Arashiyama bamboo</div>
-          </div>
-          <div class="exp-photo-card">
-            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Gion%20Alley%20at%20Night.jpg" alt="Gion at night">
-            <div class="exp-photo-label">Gion evenings</div>
-          </div>
+          <div class="exp-photo-card"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Fushimi%20Inari-taisha%20sembon-torii.jpg" alt="Fushimi Inari"><div class="exp-photo-label red">Fushimi Inari at sunrise</div></div>
+          <div class="exp-photo-card"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Arashiyama%20Bamboo%20Grove%20(Unsplash).jpg" alt="Arashiyama Bamboo Grove"><div class="exp-photo-label red">Arashiyama bamboo</div></div>
+          <div class="exp-photo-card"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Gion%20Alley%20at%20Night.jpg" alt="Gion at night"><div class="exp-photo-label">Gion evenings</div></div>
         </div>
         <div class="exp-tags">
+          <span class="exp-tag red">Hozu River boat</span>
+          <span class="exp-tag">E-bike temple circuit</span>
+          <span class="exp-tag red">Fushimi Inari sunrise</span>
           <span class="exp-tag">Tea ceremony</span>
-          <span class="exp-tag">Sake tasting · Fushimi</span>
+          <span class="exp-tag">Sake tasting</span>
           <span class="exp-tag red">🎂 Birthday dinner · Mar 14</span>
+        </div>
+        <button class="exp-expand-btn" data-detail="detail-kyoto" onclick="toggleDetail('detail-kyoto',this)">What we're doing in Kyoto <span class="chev">↓</span></button>
+        <div class="exp-detail" id="detail-kyoto">
+          <div class="exp-detail-inner">
+            <div class="act-grid">
+              <div class="act-card"><div class="act-icon">🚣</div><div class="act-name">Hozu River Boat</div><div class="act-desc">Traditional wooden boat through the Arashiyama gorge, guided through minor rapids by boatmen with poles. 16km of canyon scenery with actual movement — this is the fast-boat equivalent in Kyoto.</div><div class="act-cost">~$22/person · 2hrs</div></div>
+              <div class="act-card"><div class="act-icon">🚲</div><div class="act-name">E-bike Temple Circuit</div><div class="act-desc">Bamboo grove, Arashiyama, Kinkaku-ji, Philosopher's Path by e-bike. You're moving through the scenery instead of shuffling through it with tour groups. Best way to cover a lot of Kyoto in a day.</div><div class="act-cost">~$25/person · half day</div></div>
+              <div class="act-card"><div class="act-icon">🌅</div><div class="act-name">Fushimi Inari at Sunrise</div><div class="act-desc">Thousand orange gates up the mountain at 6 AM before anyone else arrives. Golden light, near silence. The photo nobody gets because it requires the early start — which this group will actually do.</div><div class="act-cost">Free · early start</div></div>
+              <div class="act-card"><div class="act-icon">🍵</div><div class="act-name">Tea Ceremony</div><div class="act-desc">Guided matcha ceremony in a traditional tea house — hands-on, 45 minutes, you're participating not observing. Japan's version of a wine tasting but with centuries of ritual behind it.</div><div class="act-cost">~$40/person</div></div>
+              <div class="act-card"><div class="act-icon">🍶</div><div class="act-name">Fushimi Sake District</div><div class="act-desc">Canal-lined neighborhood of 40+ breweries, some dating to the 1600s. Afternoon of tastings — multiple varietals, beautiful architecture, almost no tourists. One of the best hidden afternoons in Japan.</div><div class="act-cost">~$15/person</div></div>
+              <div class="act-card"><div class="act-icon">🎂</div><div class="act-name">Birthday Kaiseki · Mar 14</div><div class="act-desc">Multi-course dinner in Gion for the group. No early flight — 2:45 PM departure on the 15th. This is the night to spend money on dinner and not look at the bill until morning.</div><div class="act-cost">~$100–150/person</div></div>
+            </div>
+            <button class="back-btn" onclick="toggleDetail('detail-kyoto',document.querySelector('[data-detail=detail-kyoto]'))">↑ Back to overview</button>
+          </div>
         </div>
       </div>
 
     </div>
   </section>
 
-  <section class="birthday sakura-bg">
+    <section class="birthday sakura-bg">
     <div class="tag">March 14, 2027</div>
     <h2 class="jp-display">Happy Birthday, Anicka.</h2>
     <p>Dinner in Gion, no early flight the next morning to hold anyone back — we don't leave until 2:45 PM on the 15th. This is the night to go all out.</p>
@@ -607,12 +698,12 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
   const map = L.map('japan-map', {
-    center: [37.5, 136.5],
+    center: [37.2, 136.8],
     zoom: 5,
     zoomControl: false,
     attributionControl: true,
     scrollWheelZoom: false,
-    dragging: !L.Browser.mobile,
+    dragging: false,
     tap: false
   });
 
@@ -622,113 +713,38 @@
   }).addTo(map);
 
   const stops = [
-    { name:'Tokyo',  jp:'東京', lat:35.682, lng:139.759, color:'#c4123f', dates:'Mar 5–7' },
-    { name:'Hakone', jp:'箱根', lat:35.232, lng:139.025, color:'#c9a227', dates:'Mar 7–9' },
-    { name:'Kyoto',  jp:'京都', lat:35.011, lng:135.768, color:'#c4123f', dates:'Mar 9–15' }
+    { name:'Tokyo',       jp:'東京', lat:35.682, lng:139.759, color:'#c4123f', dates:'Mar 5–7' },
+    { name:'Hakone',      jp:'箱根', lat:35.232, lng:139.025, color:'#c9a227', dates:'Mar 7–9' },
+    { name:'Kawaguchiko', jp:'富士', lat:35.509, lng:138.763, color:'#c9a227', dates:'Mar 9–10' },
+    { name:'Kyoto',       jp:'京都', lat:35.011, lng:135.768, color:'#c4123f', dates:'Mar 10–15' }
   ];
 
-  function dotIcon(color, size=14, opacity=1){
-    return L.divIcon({
+  stops.forEach(s => {
+    const icon = L.divIcon({
       className:'',
-      html:`<div style="width:${size}px;height:${size}px;background:${color};border-radius:50%;border:2px solid rgba(255,255,255,0.35);box-shadow:0 0 ${size}px ${color}99;opacity:${opacity};transition:all 0.4s ease;"></div>`,
-      iconSize:[size,size], iconAnchor:[size/2,size/2]
+      html:`<div style="width:13px;height:13px;background:${s.color};border-radius:50%;border:2px solid rgba(255,255,255,0.4);box-shadow:0 0 12px ${s.color}aa;"></div>`,
+      iconSize:[13,13], iconAnchor:[6,6]
     });
-  }
-
-  // Add city markers
-  const markers = stops.map(s => {
-    const m = L.marker([s.lat,s.lng], {icon: dotIcon(s.color)}).addTo(map);
-    m.bindTooltip(
-      `<span style="font-family:'Noto Serif JP',serif;font-size:13px;">${s.jp}</span>&nbsp;<span style="opacity:0.6;font-size:10px;letter-spacing:0.06em;">${s.name.toUpperCase()} · ${s.dates}</span>`,
+    L.marker([s.lat,s.lng],{icon}).addTo(map).bindTooltip(
+      `<span style="font-family:'Noto Serif JP',serif;font-size:13px;">${s.jp}</span>&nbsp;<span style="opacity:0.55;font-size:10px;letter-spacing:0.06em;">${s.name.toUpperCase()} · ${s.dates}</span>`,
       {permanent:true, className:'map-label', direction:'right', offset:[10,0]}
     );
-    return m;
   });
 
-  // Static route line
-  const routeLine = L.polyline(stops.map(s=>[s.lat,s.lng]),{
-    color:'#c4123f', weight:2, opacity:0.45, dashArray:'7 5'
+  L.polyline(stops.map(s=>[s.lat,s.lng]),{
+    color:'#c4123f', weight:2, opacity:0.55, dashArray:'6 5'
   }).addTo(map);
+</script>
 
-  // Also add Shinkansen return line (Kyoto → Tokyo) as subtle gold dash
-  L.polyline([[35.011, 135.768],[35.682, 139.759]],{
-    color:'#c9a227', weight:1.5, opacity:0.25, dashArray:'4 8'
-  }).addTo(map);
-
-  // ===== ANIMATION: progressive route draw =====
-  const sleep = ms => new Promise(r => setTimeout(r, ms));
-
-  function interpolate(from, to, steps) {
-    const pts = [];
-    for (let i = 0; i <= steps; i++) {
-      const t = i / steps;
-      pts.push([
-        from[0] + (to[0] - from[0]) * t,
-        from[1] + (to[1] - from[1]) * t
-      ]);
+<script>
+  function toggleDetail(id, btn) {
+    const detail = document.getElementById(id);
+    const isOpen = detail.classList.contains('is-open');
+    detail.classList.toggle('is-open');
+    if(btn) btn.classList.toggle('is-open');
+    if(isOpen){
+      detail.closest('.exp-leg').scrollIntoView({behavior:'smooth', block:'start'});
     }
-    return pts;
-  }
-
-  let animRunning = false;
-
-  async function runTripAnimation() {
-    if (animRunning) return;
-    animRunning = true;
-    const btn = document.getElementById('play-btn');
-    btn.style.opacity = '0.4';
-    btn.style.pointerEvents = 'none';
-    btn.textContent = '● Playing…';
-
-    // Reset
-    routeLine.setLatLngs([]);
-    markers.forEach((m,i) => m.setIcon(dotIcon(stops[i].color, 14, 0.25)));
-
-    // Zoom into Tokyo first
-    map.flyTo([36.5, 138.5], 7, {duration:1.5, easeLinearity:0.3});
-    await sleep(1800);
-
-    // Draw Tokyo → Hakone
-    const seg1 = interpolate([35.682,139.759],[35.232,139.025], 40);
-    for (let i = 0; i < seg1.length; i++) {
-      routeLine.setLatLngs([...seg1.slice(0, i+1)]);
-      await sleep(30);
-    }
-
-    // Pulse Tokyo and Hakone
-    markers[0].setIcon(dotIcon('#ff3d6e', 20, 1));
-    await sleep(250);
-    markers[0].setIcon(dotIcon('#c4123f', 14, 1));
-    markers[1].setIcon(dotIcon('#f0c050', 20, 1));
-    await sleep(250);
-    markers[1].setIcon(dotIcon('#c9a227', 14, 1));
-    await sleep(400);
-
-    // Pan west, draw Hakone → Kyoto
-    map.panTo([35.3, 137.2], {animate:true, duration:1});
-    await sleep(1200);
-
-    const seg2 = interpolate([35.232,139.025],[35.011,135.768], 60);
-    for (let i = 0; i < seg2.length; i++) {
-      routeLine.setLatLngs([...seg1, ...seg2.slice(1, i+1)]);
-      await sleep(28);
-    }
-
-    // Pulse Kyoto
-    markers[2].setIcon(dotIcon('#ff3d6e', 22, 1));
-    await sleep(300);
-    markers[2].setIcon(dotIcon('#c4123f', 14, 1));
-    await sleep(600);
-
-    // Zoom back to all Japan
-    map.flyTo([37.5, 136.5], 5, {duration:1.4});
-    await sleep(1600);
-
-    btn.textContent = '↺ Replay';
-    btn.style.opacity = '1';
-    btn.style.pointerEvents = 'auto';
-    btn.onclick = () => runTripAnimation();
-    animRunning = false;
   }
 </script>
 
